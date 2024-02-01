@@ -1,4 +1,4 @@
-package popsizefunc.lphy.evolution.coalescent;
+package popsizefunc.lphy.evolution.popsize;
 
 public interface PopulationFunction {
 

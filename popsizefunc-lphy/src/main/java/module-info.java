@@ -6,6 +6,7 @@ module popsizefunc.lphy {
     requires transitive lphy.base;
 
     exports popsizefunc.lphy.evolution.coalescent;
+    exports popsizefunc.lphy.evolution.popsize;
     exports popsizefunc.lphy.spi;
 
     // declare what service interface the provider intends to use
