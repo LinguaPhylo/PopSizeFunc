@@ -45,7 +45,7 @@ publishing {
             from(components["java"])
             pom {
                 packaging = "jar"
-                description.set("LPhy extension for Phylonco BEAST2 package")
+                description.set("LPhy extension for population function.")
                 developers {
                     developer {
                         name.set("LPhy development team")
