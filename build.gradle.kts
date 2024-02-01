@@ -73,12 +73,12 @@ subprojects {
     // configure the shared contents in MavenPublication especially POM
     afterEvaluate{
         // exclude subproject beast2, publish both in lphybeast
-        if (!project.name.equals("phylonco-beast")) {
+        if (!project.name.equals("PopSizeFunc")) {
             extensions.configure<PublishingExtension> {
                 publications {
                     withType<MavenPublication>().all() {
                         // only for name.contains("lphy")
-                        if (name.contains("phylonco")) {
+                        if (name.contains("popsizefunc")) {
                             // Configures the version mapping strategy
                             versionMapping {
                                 usage("java-api") {
