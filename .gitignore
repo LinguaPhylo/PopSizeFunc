@@ -1,9 +1,18 @@
 # Compiled class file
 *.class
+*.iml
 
-# Log file
+# output files
 *.log
+*.nexus
+*.trees
 
+# build files
+.gradle
+**/build/**
+
+# macOS Files
+**/.DS_Store
 # BlueJ files
 *.ctxt
 
