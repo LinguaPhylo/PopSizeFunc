@@ -10,6 +10,7 @@
 # build files
 .gradle
 **/build/**
+.idea
 
 # macOS Files
 **/.DS_Store
