@@ -2,7 +2,7 @@ package popsizefunc.lphy.evolution.popsize;
 
 public class ConstantPopulation implements PopulationFunction{
 
-    private double N0 = 1.0;
+    private double N0 = 1.0 ;
 
     public ConstantPopulation(double N0) {
         this.N0 = N0;
