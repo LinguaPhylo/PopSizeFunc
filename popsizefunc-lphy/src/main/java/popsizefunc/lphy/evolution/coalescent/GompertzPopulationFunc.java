@@ -20,20 +20,20 @@ public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunc
         setParam(NINFINITYParamName, NInfinity);
     }
 
-    @GeneratorInfo(name="gompertz", verbClause = "is assumed to come from", narrativeName = "Gompertz growth function",
+    @GeneratorInfo(name="gompertz", narrativeName = "Gompertz growth function",
             category = GeneratorCategory.COAL_TREE, examples = {" .lphy" },
             description = "Models population growth using the Gompertz growth function.")
 
+    @Override
     public Value<PopulationFunction> apply() {
 
-        double N0 = ((Number) getParams().get("N0").value()).doubleValue();
-        double b = ((Number) getParams().get("b").value()).doubleValue();
-        double NInfinity = ((Number) getParams().get("NInfinity").value()).doubleValue();
+        double N0 = ((Number) getParams().get(N0ParamName).value()).doubleValue();
+        double b = ((Number) getParams().get(BParamName).value()).doubleValue();
+        double NInfinity = ((Number) getParams().get(NINFINITYParamName).value()).doubleValue();
 
-        PopulationFunction pf;
-        pf = new GompertzPopulation(N0, b, NInfinity);
+        PopulationFunction gompertzPopulation = new GompertzPopulation(N0, b, NInfinity);
 
-        return new Value<>(null, pf, this);
+        return new Value<>( gompertzPopulation, this);
     }
 
 
