@@ -86,5 +86,22 @@ val lphyDoc by tasks.register("lphyDoc", JavaExec::class.java) {
     setArgs(listOf("$version", "PopSizeFunc", "popsize.lphy.spi.PopSizeFunc"))
 }
 
+// junit tests, https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
+tasks.test {
+    useJUnitPlatform() {
+        excludeTags("dev")
+    }
+    // set heap size for the test JVM(s)
+    minHeapSize = "256m"
+    maxHeapSize = "3G"
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging.showStandardStreams = true
 
+    reports {
+        junitXml.apply {
+            isOutputPerTestCase = true // defaults to false
+            mergeReruns.set(true) // defaults to false
+        }
+    }
+}
 
