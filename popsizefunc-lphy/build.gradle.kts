@@ -23,7 +23,7 @@ dependencies {
     // launch studio from its jar, but not depend on it
     runtimeOnly("io.github.linguaphylo:lphy-studio:1.5.0-SNAPSHOT")
 
-    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 // lphy-$version.jar
