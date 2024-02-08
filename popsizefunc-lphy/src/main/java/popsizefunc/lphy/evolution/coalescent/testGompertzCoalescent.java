@@ -26,7 +26,7 @@ public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
 
 
 
-    public testGompertzCoalescent(@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
+    public testGompertzCoalescent(//@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
                                   @ParameterInfo(name = CoalescentGompertz.N0ParamName, description = "Initial population size.") Value<Double> N0,
                                   @ParameterInfo(name = CoalescentGompertz.BParamName, description = "Growth rate.") Value<Double> b,
                                   @ParameterInfo(name = CoalescentGompertz.NINFINITYParamName, description = "Carrying capacity.") Value<Double> NInfinity,
@@ -38,14 +38,19 @@ public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
         //。。。。。。。。。。。。。。。。。。。。。。。。。
         GompertzPopulation gompertzPop = new GompertzPopulation(N0.value(), b.value(), NInfinity.value());
 
-        this.popFunc = new Value<>(gompertzPop);
+//        this.popFunc = new Value<>(gompertzPop);
+//        String gompertzPopId = "gompertzPopulation";
+//        this.popFunc = new Value<PopulationFunction>(gompertzPopId, gompertzPop);
 
+        this.popFunc = new Value<PopulationFunction>("gompertzPopulation", gompertzPop);
 
         this.ages = ages;
         super.checkTaxaParameters(true);
         checkDimensions();
 
     }
+
+
 
     private void checkDimensions() {
         boolean success = true;
@@ -132,7 +137,7 @@ public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
         if (N0 != null && b != null && NInfinity != null) {
             // 如果是，则创建GompertzPopulation实例并更新popFunc
             GompertzPopulation gompertzPop = new GompertzPopulation(N0.value(), b.value(), NInfinity.value());
-            this.popFunc = new Value<PopulationFunction>(gompertzPop);
+            this.popFunc = new Value<PopulationFunction>("gompertzPopulation", gompertzPop);
         }
     }
 
