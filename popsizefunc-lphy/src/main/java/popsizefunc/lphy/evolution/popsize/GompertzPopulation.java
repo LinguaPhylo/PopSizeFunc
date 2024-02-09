@@ -1,12 +1,20 @@
 package popsizefunc.lphy.evolution.popsize;
 
+//import Input.Input;
+
 public class GompertzPopulation implements PopulationFunction{
+
+//    final public Input<Double> N0Input = new Input<>("N0", "Initial population size", 1.0);
+//    final public Input<Double> bInput = new Input<>("b", "Initial growth rate of tumor growth", 0.0);
+//    final public Input<Double> NInfinityInput = new Input<>("NInfinity", "Carrying capacity", 1000.0);
+
+
     private double N0;  // Initial population size
     private double b;   // Initial growth rate of tumor growth
     private double NInfinity; // Carrying capacity
 
 
-    public GompertzPopulation(double N0, double b, double NInfinity) {
+    public GompertzPopulation(double N0, double b, double NInfinity){
         this.N0 = N0;
         this.b = b;
         this.NInfinity = NInfinity;

@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
+public class GompertzPopulationCoalescent extends TaxaConditionedTreeGenerator {
     private Value<PopulationFunction> popFunc;
     private Value<Double> N0;
     private Value<Double> b;
@@ -26,13 +26,13 @@ public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
 
 
 
-    public testGompertzCoalescent(//@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
-                                  @ParameterInfo(name = CoalescentGompertz.N0ParamName, description = "Initial population size.") Value<Double> N0,
-                                  @ParameterInfo(name = CoalescentGompertz.BParamName, description = "Growth rate.") Value<Double> b,
-                                  @ParameterInfo(name = CoalescentGompertz.NINFINITYParamName, description = "Carrying capacity.") Value<Double> NInfinity,
-                                  @ParameterInfo(name = DistributionConstants.nParamName, description = "number of taxa.", optional = true) Value<Integer> n,
-                                  @ParameterInfo(name = TaxaConditionedTreeGenerator.taxaParamName, description = "Taxa object, (e.g. Taxa or Object[])", optional = true) Value<Taxa> taxa,
-                                  @ParameterInfo(name = TaxaConditionedTreeGenerator.agesParamName, description = "an array of leaf node ages.", optional = true) Value<Double[]> ages) {
+    public GompertzPopulationCoalescent(//@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
+                                        @ParameterInfo(name = CoalescentGompertz.N0ParamName, description = "Initial population size.") Value<Double> N0,
+                                        @ParameterInfo(name = CoalescentGompertz.BParamName, description = "Growth rate.") Value<Double> b,
+                                        @ParameterInfo(name = CoalescentGompertz.NINFINITYParamName, description = "Carrying capacity.") Value<Double> NInfinity,
+                                        @ParameterInfo(name = DistributionConstants.nParamName, description = "number of taxa.", optional = true) Value<Integer> n,
+                                        @ParameterInfo(name = TaxaConditionedTreeGenerator.taxaParamName, description = "Taxa object, (e.g. Taxa or Object[])", optional = true) Value<Taxa> taxa,
+                                        @ParameterInfo(name = TaxaConditionedTreeGenerator.agesParamName, description = "an array of leaf node ages.", optional = true) Value<Double[]> ages) {
         super(n, taxa, ages);
 
         //。。。。。。。。。。。。。。。。。。。。。。。。。
@@ -75,26 +75,26 @@ public class testGompertzCoalescent extends TaxaConditionedTreeGenerator {
         while (activeNodes.size() > 1) {
             int lineageCount = activeNodes.size();
 
-            // 使用 Utils.getSimulatedInterval 方法来计算下一个合并事件的时间间隔
+            // Use the Utils.getSimulatedInterval method to calculate the time interval for the next merge event
             double interval = Utils.getSimulatedInterval(popFunc.value(), lineageCount, time);
 
-            // 更新当前时间，加上新计算出的时间间隔
+            // Update the current time, plus the newly calculated time interval
             time += interval;
 
-            // 随机选择两个节点进行合并
+            // Randomly select two nodes to coalescent
             TimeTreeNode a = drawRandomNode(activeNodes);
             TimeTreeNode b = drawRandomNode(activeNodes);
 
-            // 创建新的父节点并更新活跃节点列表
+            // Create a new parent node and update the list of active nodes
             TimeTreeNode parent = new TimeTreeNode(time, new TimeTreeNode[] {a, b});
             activeNodes.add(parent);
 
-            // 从活跃节点列表中移除已经合并的两个节点
+            // Remove two coalescent nodes from the active node list
             activeNodes.remove(a);
             activeNodes.remove(b);
         }
 
-        // 设置树的根节点
+        // Set the root node of the tree
         tree.setRoot(activeNodes.get(0));
 
         return new RandomVariable<>("\u03C8", tree, this);
