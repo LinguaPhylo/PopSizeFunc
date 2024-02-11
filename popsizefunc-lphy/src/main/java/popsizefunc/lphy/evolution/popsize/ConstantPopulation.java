@@ -15,11 +15,11 @@ public class ConstantPopulation implements PopulationFunction{
 
     @Override
     public double getIntensity(double t) {
-        throw new UnsupportedOperationException();
+        return t / this.N0;
     }
 
     @Override
     public double getInverseIntensity(double x) {
-        throw new UnsupportedOperationException();
+        return this.N0 * x;
     }
 }

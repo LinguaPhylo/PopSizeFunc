@@ -26,7 +26,7 @@ public class GompertzPopulationCoalescent extends TaxaConditionedTreeGenerator {
 
 
 
-    public GompertzPopulationCoalescent(//@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
+    public GompertzPopulationCoalescent(@ParameterInfo(name = PopulationFunctionName, description = "Initial population size.") Value<PopulationFunction> popFunc,
                                         @ParameterInfo(name = CoalescentGompertz.N0ParamName, description = "Initial population size.") Value<Double> N0,
                                         @ParameterInfo(name = CoalescentGompertz.BParamName, description = "Growth rate.") Value<Double> b,
                                         @ParameterInfo(name = CoalescentGompertz.NINFINITYParamName, description = "Carrying capacity.") Value<Double> NInfinity,
@@ -35,14 +35,17 @@ public class GompertzPopulationCoalescent extends TaxaConditionedTreeGenerator {
                                         @ParameterInfo(name = TaxaConditionedTreeGenerator.agesParamName, description = "an array of leaf node ages.", optional = true) Value<Double[]> ages) {
         super(n, taxa, ages);
 
-        //。。。。。。。。。。。。。。。。。。。。。。。。。
-        GompertzPopulation gompertzPop = new GompertzPopulation(N0.value(), b.value(), NInfinity.value());
+        this.popFunc = popFunc;
+        if (N0 != null && b != null && NInfinity != null) {
+            GompertzPopulation gompertzPop = new GompertzPopulation(N0.value(), b.value(), NInfinity.value());
+            this.popFunc = new Value<>("gompertzPopulation", gompertzPop);
+        }else {
+            throw new IllegalArgumentException("N0, b, and NInfinity must not be null");
+        }
 
 //        this.popFunc = new Value<>(gompertzPop);
 //        String gompertzPopId = "gompertzPopulation";
 //        this.popFunc = new Value<PopulationFunction>(gompertzPopId, gompertzPop);
-
-        this.popFunc = new Value<PopulationFunction>("gompertzPopulation", gompertzPop);
 
         this.ages = ages;
         super.checkTaxaParameters(true);
@@ -135,7 +138,7 @@ public class GompertzPopulationCoalescent extends TaxaConditionedTreeGenerator {
         }
 
         if (N0 != null && b != null && NInfinity != null) {
-            // 如果是，则创建GompertzPopulation实例并更新popFunc
+            // If so, create a GompertzPopulation instance and update popFunc
             GompertzPopulation gompertzPop = new GompertzPopulation(N0.value(), b.value(), NInfinity.value());
             this.popFunc = new Value<PopulationFunction>("gompertzPopulation", gompertzPop);
         }

@@ -13,7 +13,10 @@ import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import popsizefunc.lphy.evolution.popsize.PopulationFunction;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
     private Value<PopulationFunction> popFunc;
@@ -48,36 +51,75 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
             category = GeneratorCategory.COAL_TREE, examples = {"https://linguaphylo.github.io/tutorials/time-stamped-data/"},
             description = "The Kingman coalescent with serially sampled data. (Rodrigo and Felsenstein, 1999)")
 
+
     public RandomVariable<TimeTree> sample() {
         TimeTree tree = new TimeTree();
 
         List<TimeTreeNode> activeNodes = createLeafTaxa(tree);
 
         double time = 0.0;
-        double theta = popFunc.value().getTheta(time); // wrong
 
         while (activeNodes.size() > 1) {
-            int k = activeNodes.size();
+            int lineageCount = activeNodes.size();
 
+            // Use the Utils.getSimulatedInterval method to calculate the time interval for the next coalescent event
+            double interval = Utils.getSimulatedInterval(popFunc.value(), lineageCount, time);
+
+            // Update the current time, plus the newly calculated time interval
+            time += interval;
+
+            // Randomly select two nodes to coalescent
             TimeTreeNode a = drawRandomNode(activeNodes);
             TimeTreeNode b = drawRandomNode(activeNodes);
 
-            double rate = (k * (k - 1.0))/(theta * 2.0);
-
-            // random exponential variate
-            double x = - Math.log(random.nextDouble()) / rate;
-            time += x;
-
+            // Create a new parent node and update the list of active nodes
             TimeTreeNode parent = new TimeTreeNode(time, new TimeTreeNode[] {a, b});
             activeNodes.add(parent);
+
+            // Remove two coalescent nodes from the active node list
+            activeNodes.remove(a);
+            activeNodes.remove(b);
         }
 
+        // Set the root node of the tree
         tree.setRoot(activeNodes.get(0));
 
-
-
         return new RandomVariable<>("\u03C8", tree, this);
+
+
     }
+
+
+//    public RandomVariable<TimeTree> sample() {
+//        TimeTree tree = new TimeTree();
+//
+//        List<TimeTreeNode> activeNodes = createLeafTaxa(tree);
+//
+//        double time = 0.0;
+//        double theta = popFunc.value().getTheta(time); // wrong
+//
+//        while (activeNodes.size() > 1) {
+//            int k = activeNodes.size();
+//
+//            TimeTreeNode a = drawRandomNode(activeNodes);
+//            TimeTreeNode b = drawRandomNode(activeNodes);
+//
+//            double rate = (k * (k - 1.0))/(theta * 2.0);
+//
+//            // random exponential variate
+//            double x = - Math.log(random.nextDouble()) / rate;
+//            time += x;
+//
+//            TimeTreeNode parent = new TimeTreeNode(time, new TimeTreeNode[] {a, b});
+//            activeNodes.add(parent);
+//        }
+//
+//        tree.setRoot(activeNodes.get(0));
+//
+//
+//
+//        return new RandomVariable<>("\u03C8", tree, this);
+//    }
 
     @Override
     public Map<String, Value> getParams() {
