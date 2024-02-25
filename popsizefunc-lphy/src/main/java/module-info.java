@@ -5,6 +5,8 @@ module popsizefunc.lphy {
     requires transitive lphy.core;
     requires transitive lphy.base;
 
+    //requires commons.math3;
+
     exports popsizefunc.lphy.evolution.coalescent;
     exports popsizefunc.lphy.evolution.popsize;
     exports popsizefunc.lphy.spi;

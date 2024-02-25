@@ -22,7 +22,7 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
     private Value<PopulationFunction> popFunc;
 
 
-    public PopulationFunctionCoalescent(@ParameterInfo(name = CoalescentConstants.thetaParamName, narrativeName = "population size", description = "the population size.") Value<PopulationFunction> popFunc,
+    public PopulationFunctionCoalescent(@ParameterInfo(name = CoalescentConstants.thetaParamName, narrativeName = "population size function.", description = "the population size.") Value<PopulationFunction> popFunc,
                                         @ParameterInfo(name = DistributionConstants.nParamName, description = "number of taxa.", optional = true) Value<Integer> n,
                                         @ParameterInfo(name = TaxaConditionedTreeGenerator.taxaParamName, description = "Taxa object, (e.g. Taxa or Object[])", optional = true) Value<Taxa> taxa,
                                         @ParameterInfo(name = TaxaConditionedTreeGenerator.agesParamName, description = "an array of leaf node ages.", optional = true) Value<Double[]> ages) {
@@ -63,7 +63,19 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
             int lineageCount = activeNodes.size();
 
             // Use the Utils.getSimulatedInterval method to calculate the time interval for the next coalescent event
-            double interval = Utils.getSimulatedInterval(popFunc.value(), lineageCount, time);
+//            double interval = Utils.getSimulatedInterval(popFunc.value(), lineageCount, time);
+
+            // 假设popFunc是一个Value<PopulationFunction>类型
+            PopulationFunction pf = popFunc.value(); // 获取PopulationFunction实例
+
+            double interval = 0;
+            if (pf.isAnalytical()) {
+
+                interval = Utils.getSimulatedInterval(pf, lineageCount, time);
+            } else {
+
+                interval = Utils.getNumericalInterval(pf, lineageCount, time);
+            }
 
             // Update the current time, plus the newly calculated time interval
             time += interval;

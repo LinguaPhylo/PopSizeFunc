@@ -28,4 +28,7 @@ public interface PopulationFunction {
     }
 
 
+    boolean isAnalytical();
+
+
 }

@@ -22,4 +22,10 @@ public class ConstantPopulation implements PopulationFunction{
     public double getInverseIntensity(double x) {
         return this.N0 * x;
     }
+
+    @Override
+    public boolean isAnalytical() {
+        // 对于这个特定的实现，返回true或false根据实际情况
+        return true; // 或者 false，取决于是否是解析的
+    }
 }
