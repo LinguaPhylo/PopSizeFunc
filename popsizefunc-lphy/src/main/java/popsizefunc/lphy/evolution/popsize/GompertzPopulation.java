@@ -42,28 +42,14 @@ public class GompertzPopulation implements PopulationFunction{
      * @return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)))
      */
 
-    @Override
-    public double getTheta(double t) {
-        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)));
+
 
 
 //        Implement the Gompertz function to calculate theta at time t
 //        Assuming theta is proportional to population size for simplicity
 //        return N0 * Math.exp(k * (1 - Math.exp(-b * t)));
-    }
 
-    @Override
-    public double getIntensity(double t) {
-        UnivariateFunction function = new UnivariateFunction() {
-            @Override
-            public double value(double time) {
-                return 1 / getTheta(time);
-            }
-        };
-        UnivariateIntegrator integrator = new TrapezoidIntegrator();
-        return integrator.integrate(10000, function, 0, t);
-    }
-//    public double getIntensity(double t) {
+    //    public double getIntensity(double t) {
 //        double exponent = -b * t;
 //        double eiArgument = Math.exp(exponent) * this.k;
 //        double ei = SpecialFunctions.exponentialIntegralEi(eiArgument);
@@ -72,18 +58,37 @@ public class GompertzPopulation implements PopulationFunction{
 //
 //    }
 
-    public double getInverseIntensity(double x) {
-        UnivariateFunction function = new UnivariateFunction() {
-            @Override
-            public double value(double time) {
-                return getIntensity(time) - x;
-            }
-        };
-
-        UnivariateSolver solver = new BrentSolver();
-        return solver.solve(100, function, 0, 100); // Adjust the range [0, 100] as necessary
+//    public double getInverseIntensity(double x) {
+//        UnivariateFunction function = new UnivariateFunction() {
+//            @Override
+//            public double value(double time) {
+//                return getIntensity(time) - x;
+//            }
+//        };
+//
+//        UnivariateSolver solver = new BrentSolver();
+//        return solver.solve(100, function, 0, 100); // Adjust the range [0, 100] as necessary
+//    }
+    @Override
+    public double getTheta(double t) {
+        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)));
     }
 
+    @Override
+    public double getIntensity(double t) {
+        UnivariateFunction function = time -> 1 / getTheta(time);
+        UnivariateIntegrator integrator = new TrapezoidIntegrator();
+        // The number 10000 here represents a very high number of iterations for accuracy.
+        return integrator.integrate(10000, function, 0, t);
+    }
+
+    @Override
+    public double getInverseIntensity(double x) {
+        UnivariateFunction function = time -> getIntensity(time) - x;
+        UnivariateSolver solver = new BrentSolver();
+        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
+        return solver.solve(100, function, 0, 100);
+    }
 
     /**
     use numerical method here, return false

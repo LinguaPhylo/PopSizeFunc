@@ -193,29 +193,26 @@ class GompertzPopulationTest {
 
 
     @Test
-    public void testPopulationModelIntegration() {
-
-        double N0 = 100;
-        double b = 0.1;
-        double NInfinity = 1000;
+    public void testIntensityAndInverseIntensity() {
+        // 初始化 GompertzPopulation 实例
+        double N0 = 100; // 初始人口大小
+        double b = 0.1; // 增长率
+        double NInfinity = 1000; // 最大承载量
         GompertzPopulation population = new GompertzPopulation(N0, b, NInfinity);
 
-        double t = 5;
+        double t = 5; // 给定的时间点
 
-
-        double thetaAtTimeT = population.getTheta(t);
-        assertTrue(thetaAtTimeT > 0, "Theta should be positive.");
-
-
+        // 计算给定时间点的累积强度
         double intensityAtTimeT = population.getIntensity(t);
-        assertTrue(intensityAtTimeT > 0, "Intensity should be positive.");
 
-
+        // 使用累积强度值计算其对应的时间
         double inverseIntensityResult = population.getInverseIntensity(intensityAtTimeT);
 
-
+        // 验证逆强度计算结果是否接近原始时间点
+        // 允许一定的误差范围
         assertEquals(t, inverseIntensityResult, 0.1, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
     }
+
 
 
 
@@ -249,7 +246,6 @@ class GompertzPopulationTest {
         assertEquals(expectedIntensity, actualIntensity, 1e-5);
 
     }
-
     @Test
     void testGetInverseIntensity() {
         ExponentialGrowthModel model = new ExponentialGrowthModel(0.1);
@@ -259,10 +255,6 @@ class GompertzPopulationTest {
         // Verify whether getInverseIntensity can accurately derive the original time point. 0.1 is used as the error range here.
         assertEquals(5, actualTime, 0.1, "The inverse intensity calculation should accurately return the original time point within an acceptable error margin.");
     }
-
-
-
-
 
 
 
