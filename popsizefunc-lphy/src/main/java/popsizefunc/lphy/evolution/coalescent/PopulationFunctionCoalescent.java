@@ -69,13 +69,13 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
             PopulationFunction pf = popFunc.value(); // 获取PopulationFunction实例
 
             double interval = 0;
-            if (pf.isAnalytical()) {
-
-                interval = Utils.getSimulatedInterval(pf, lineageCount, time);
-            } else {
+//            if (pf.isAnalytical()) {
+//
+//                interval = Utils.getSimulatedInterval(pf, lineageCount, time);
+//            } else {
 
                 interval = Utils.getNumericalInterval(pf, lineageCount, time);
-            }
+//            }
 
             // Update the current time, plus the newly calculated time interval
             time += interval;

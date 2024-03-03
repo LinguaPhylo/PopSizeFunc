@@ -1,5 +1,9 @@
 package popsizefunc.lphy.evolution.popsize;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
+import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
+
 public interface PopulationFunction {
 
     /**
@@ -13,7 +17,10 @@ public interface PopulationFunction {
      * @return value of demographic intensity function at time t (x = integral 1/N(s) ds from 0 to t).
      */
     default double getIntensity(double t) {
-        return 0;
+
+        UnivariateFunction function = time -> 1 / getTheta(time);
+        UnivariateIntegrator integrator = new TrapezoidIntegrator();
+        return integrator.integrate(10000, function, 0, t);
     }
 
 
@@ -26,9 +33,6 @@ public interface PopulationFunction {
     default double getInverseIntensity(double x) {
         return 0;
     }
-
-
-    boolean isAnalytical();
 
 
 }

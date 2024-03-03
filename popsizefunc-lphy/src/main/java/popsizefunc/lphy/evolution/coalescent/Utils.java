@@ -35,11 +35,11 @@ public class Utils {
                                       int lineageCount, double timeOfLastCoalescent) {
         double intensity;
         // 直接使用 populationFunction 的 isAnalytical 方法来决定计算方式
-        if (populationFunction.isAnalytical()) {
-            intensity = populationFunction.getIntensity(timeOfLastCoalescent);
-        } else {
+//        if (populationFunction.isAnalytical()) {
+//            intensity = populationFunction.getIntensity(timeOfLastCoalescent);
+//        } else {
             intensity = trapezoidalRule(populationFunction, 0, timeOfLastCoalescent, 100); // 使用数值积分
-        }
+//        }
         double tmp = -Math.log(U) / BinomialUtils.choose2(lineageCount) + intensity;
         return populationFunction.getInverseIntensity(tmp) - timeOfLastCoalescent;
     }
