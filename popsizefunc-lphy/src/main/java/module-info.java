@@ -10,6 +10,7 @@ module popsizefunc.lphy {
     exports popsizefunc.lphy.evolution.coalescent;
     exports popsizefunc.lphy.evolution.popsize;
     exports popsizefunc.lphy.spi;
+    exports popsizefunc.lphy.evolution.func;
 
     // declare what service interface the provider intends to use
     uses lphy.core.spi.Extension;

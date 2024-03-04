@@ -49,14 +49,11 @@ public class ExponentialPopulation implements PopulationFunction {
     }
 
 
-    /**
-     * If min is set to 0 in BrentSolver, an error will be reported:
-     * org.apache.commons.math3.exception.NumberIsTooLargeException: endpoints do not specify an interval: [0, 0]
-     * so I change min equals to 0.1
-     */
-
     @Override
     public double getInverseIntensity(double x) {
+//        If min is set to 0 in BrentSolver, an error will be reported:
+//        org.apache.commons.math3.exception.NumberIsTooLargeException: endpoints do not specify an interval: [0, 0]
+//        so I change min equals to 0.1
         UnivariateFunction function = time -> getIntensity(time) - x;
         UnivariateSolver solver = new BrentSolver();
         // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.

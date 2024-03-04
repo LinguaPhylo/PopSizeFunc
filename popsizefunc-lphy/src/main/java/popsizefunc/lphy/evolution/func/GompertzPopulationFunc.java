@@ -1,4 +1,4 @@
-package popsizefunc.lphy.evolution.coalescent;
+package popsizefunc.lphy.evolution.func;
 
 
 import lphy.core.model.DeterministicFunction;
@@ -9,7 +9,8 @@ import lphy.core.model.annotation.ParameterInfo;
 import popsizefunc.lphy.evolution.popsize.GompertzPopulation;
 import popsizefunc.lphy.evolution.popsize.PopulationFunction;
 
-import static popsizefunc.lphy.evolution.coalescent.CoalescentGompertz.*;
+import static popsizefunc.lphy.evolution.popsize.GompertzPopulation.*;
+
 
 public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunction> {
     public GompertzPopulationFunc(@ParameterInfo(name = N0ParamName, description = "Initial population size.") Value<Double> N0,

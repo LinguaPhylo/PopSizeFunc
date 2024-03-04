@@ -4,8 +4,7 @@ import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
 import popsizefunc.lphy.evolution.coalescent.ConstantPopSizeFunc;
-import popsizefunc.lphy.evolution.coalescent.GompertzPopulationCoalescent;
-import popsizefunc.lphy.evolution.coalescent.GompertzPopulationFunc;
+import popsizefunc.lphy.evolution.func.GompertzPopulationFunc;
 import popsizefunc.lphy.evolution.coalescent.PopulationFunctionCoalescent;
 
 import java.util.Arrays;
@@ -20,7 +19,7 @@ public class PopSizeFuncImpl extends LPhyBaseImpl {
 
     @Override
     public List<Class<? extends GenerativeDistribution>> declareDistributions() {
-        return Arrays.asList( PopulationFunctionCoalescent.class, GompertzPopulationCoalescent.class );
+        return Arrays.asList( PopulationFunctionCoalescent.class);
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.junit.jupiter.api.Test;
-import popsizefunc.lphy.evolution.coalescent.GompertzPopulationCoalescent;
 import popsizefunc.lphy.evolution.coalescent.Utils;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,30 +60,6 @@ class GompertzPopulationTest {
     }
 
 
-//    @Test
-//    void testSampleProducesValidTree() {
-//
-//        Value<Double> N0 = new Value<>("N0", 100.0);
-//        Value<Double> b = new Value<>("b", 0.01);
-//        Value<Double> NInfinity = new Value<>("NInfinity", 500.0);
-//        Value<PopulationFunction> popFunc = new Value<>("popFunc", new GompertzPopulation(N0.value(), b.value(), NInfinity.value()));
-//
-//        // 假设n为2
-//        Value<Integer> n = new Value<>("n", 2);
-//
-//        GompertzPopulationCoalescent coalescent = new GompertzPopulationCoalescent(
-//                popFunc, N0, b, NInfinity, n, null, null);
-//
-//        RandomVariable<TimeTree> result = coalescent.sample();
-//
-//        assertNotNull(result.value(), "The sampled TimeTree should not be null.");
-//
-//        assertNotNull(result.value().getRoot(), "The tree should have a root node.");
-//
-//        assertTrue(result.value().getNodes().size() >= 2, "The tree should have at least two leaves.");
-//    }
-
-
     @Test
     public void testTrapezoidalRule() {
 
@@ -97,63 +72,6 @@ class GompertzPopulationTest {
         assertEquals(50.0, result, 0.01);
     }
 
-
-
-    //In R :
-    // > my_function <- function(x){exp(-x^2)}
-    //> integration_result <- integrate(my_function, lower = -Inf, upper = Inf)
-    //> expected_value <- integration_result$value
-    //> print(expected_value)
-    //[1] 1.772453851
-    @Test
-    public void testTrapezoidalRuleAgainstRExpectedValue() {
-
-        double expectedValue = 1.772453851;
-        PopulationFunction myFunction = new PopulationFunction() {
-            @Override
-            public double getTheta(double t) {
-                return 0;
-            }
-
-            @Override
-            public double getIntensity(double t) {
-                return Math.exp(-Math.pow(t, 2));
-            }
-
-//            @Override
-//            public boolean isAnalytical() {
-//                return false;
-//            }
-        };
-        // Pay attention to choosing the appropriate integration interval and number of divisions
-        double result = Utils.trapezoidalRule(myFunction, -10, 10, 10000);
-
-        assertEquals(expectedValue, result, 0.01);
-    }
-
-//    @Test
-//    public void testExponentialIntegralEiPositive() {
-//        double x = 1.0;
-//        double expectedResult = 1.895117;
-//        double result = SpecialFunctions.exponentialIntegralEi(x);
-//        assertEquals( expectedResult, result, 0.0001);
-//    }
-
-    @Test
-    public void testExponentialIntegralEiNegative() {
-
-        double x = -1.0;
-        assertThrows(IllegalArgumentException.class, () -> {
-            SpecialFunctions.exponentialIntegralEi(x);
-        }, "Ei function should throw IllegalArgumentException for negative input");
-    }
-    @Test
-    public void testExponentialIntegralEiZero() {
-        double x = 0;
-        assertThrows(IllegalArgumentException.class, () -> {
-            SpecialFunctions.exponentialIntegralEi(x);
-        }, "Ei(x) is undefined for x <= 0.");
-    }
 
     private static final double DELTA = 1e-6;
 
@@ -240,37 +158,6 @@ class GompertzPopulationTest {
     }
 
 
-
-
-
-
-//    @Test
-//    public void testGetTheta() {
-//        ExponentialGrowthModel model = new ExponentialGrowthModel(0.1);
-//        assertEquals(Math.exp(0.1 * 5), model.getTheta(5), DELTA);
-//    }
-//
-//    @Test
-//    void testGetIntensity() {
-//        ExponentialGrowthModel model = new ExponentialGrowthModel(0.1);
-//        double expectedIntensity = 3.9346934028736658;
-//        double actualIntensity = model.getIntensity(5);
-//        assertEquals(expectedIntensity, actualIntensity, DELTA);
-//
-//    }
-//    @Test
-//    void testGetInverseIntensity() {
-//        ExponentialGrowthModel model = new ExponentialGrowthModel(0.1);
-//        // Directly use known strength values for testing
-//
-//        double testTime = 5.0;
-//
-//        double expectedIntensity = model.getAnalyticalIntensity(testTime);
-//        double actualTime = model.getInverseIntensity(expectedIntensity);
-//        // Verify whether getInverseIntensity can accurately derive the original time point. 0.1 is used as the error range here.
-//        assertEquals(testTime, actualTime, DELTA, "The inverse intensity calculation should accurately return the original time point within an acceptable error margin.");
-//    }
-
     @Test
     void testGetThetaAtT50() {
         double t50 = 10;
@@ -301,12 +188,8 @@ class GompertzPopulationTest {
 
 
 
-
-
 }
 
-
-//1.89511781636
 
 
 

@@ -8,6 +8,7 @@ import lphy.base.evolution.tree.TimeTree;
 import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
+import lphy.core.model.annotation.Citation;
 import lphy.core.model.annotation.GeneratorCategory;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
@@ -20,7 +21,19 @@ import java.util.TreeMap;
 
 public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
     private Value<PopulationFunction> popFunc;
+    /**
+     * Constructs a coalescent model with specified population function, number of taxa, taxa object, and leaf node ages.
+     * This constructor initializes the coalescent model with necessary parameters and checks for parameter consistency.
+     *
+     * @param popFunc The population size function, defining how population size changes over time.
+     * @param n Optional. The number of taxa.
+     * @param taxa Optional. The taxa object, could be a Taxa object or an array of taxa.
+     * @param ages Optional. An array representing the ages of leaf nodes.
+     */
 
+    @Citation(value = "Norton, L. (1988). A Gompertzian Model of Human Breast Cancer Growth. Cancer Research",
+            title = "A Gompertzian Model of Human Breast Cancer Growth",
+            authors = {"Norton, L"}, year = 1988)
 
     public PopulationFunctionCoalescent(@ParameterInfo(name = CoalescentConstants.thetaParamName, narrativeName = "population size function.", description = "the population size.") Value<PopulationFunction> popFunc,
                                         @ParameterInfo(name = DistributionConstants.nParamName, description = "number of taxa.", optional = true) Value<Integer> n,
@@ -33,6 +46,12 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
         super.checkTaxaParameters(true);
         checkDimensions();
     }
+
+
+    /**
+     * Checks the dimensions of the input parameters to ensure they are consistent.
+     * Throws IllegalArgumentException if the number of theta values does not match the number of taxa minus one.
+     */
 
     private void checkDimensions() {
         boolean success = true;
@@ -47,6 +66,13 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
         }
     }
 
+
+    /**
+     * Samples a coalescent tree based on Kingman's coalescent process with the possibility of serially sampled data.
+     * It uses the population function to simulate the intervals between coalescent events and constructs the tree.
+     *
+     * @return A RandomVariable object encapsulating the simulated TimeTree.
+     */
     @GeneratorInfo(name = "Coalescent", narrativeName = "Kingman's coalescent tree prior",
             category = GeneratorCategory.COAL_TREE, examples = {"https://linguaphylo.github.io/tutorials/time-stamped-data/"},
             description = "The Kingman coalescent with serially sampled data. (Rodrigo and Felsenstein, 1999)")
@@ -62,20 +88,10 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
         while (activeNodes.size() > 1) {
             int lineageCount = activeNodes.size();
 
-            // Use the Utils.getSimulatedInterval method to calculate the time interval for the next coalescent event
-//            double interval = Utils.getSimulatedInterval(popFunc.value(), lineageCount, time);
-
-            // 假设popFunc是一个Value<PopulationFunction>类型
-            PopulationFunction pf = popFunc.value(); // 获取PopulationFunction实例
-
+            // Assume popFunc is a Value<PopulationFunction> type, get the PopulationFunction instance
+            PopulationFunction pf = popFunc.value();
             double interval = 0;
-//            if (pf.isAnalytical()) {
-//
-//                interval = Utils.getSimulatedInterval(pf, lineageCount, time);
-//            } else {
-
                 interval = Utils.getNumericalInterval(pf, lineageCount, time);
-//            }
 
             // Update the current time, plus the newly calculated time interval
             time += interval;
@@ -133,6 +149,13 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
 //        return new RandomVariable<>("\u03C8", tree, this);
 //    }
 
+
+    /**
+     * Provides access to the parameters used in the coalescent model.
+     * This method returns a map of parameter names to their values.
+     *
+     * @return A map of parameter names to Value objects.
+     */
     @Override
     public Map<String, Value> getParams() {
         SortedMap<String, Value> map = new TreeMap<>();

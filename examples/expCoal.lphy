@@ -1,0 +1,16 @@
+data {
+  L = 200; // Length of the sequence
+  n = 10;  // Number of samples
+}
+
+model {
+  GrowthRate ~ Uniform(min=0.01, max=1.0);
+  N0 ~ LogNormal(meanlog=3.0, sdlog=1.0);
+
+
+  Θ(t) = N0 * exp(GrowthRate * t);
+
+  ψ ~ CoalescentVariable(theta=Θ, n=n);
+
+  D ~ PhyloCTMC(tree=ψ, L=L, Q=jukesCantor());
+}
