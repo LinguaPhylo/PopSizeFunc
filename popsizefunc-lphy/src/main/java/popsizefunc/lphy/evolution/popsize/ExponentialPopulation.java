@@ -61,6 +61,11 @@ public class ExponentialPopulation implements PopulationFunction {
         return solver.solve(100, function, 0.1, 50);
     }
 
+    @Override
+    public boolean isAnalytical() {
+        return false; //use numerical method here
+    }
+
 
     public static void main(String[] args) {
         double GrowthRate = 0.1;

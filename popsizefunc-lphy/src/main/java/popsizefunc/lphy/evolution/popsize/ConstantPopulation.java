@@ -33,9 +33,17 @@ public double getIntensity(double t) {
     public double getInverseIntensity(double x) {
         UnivariateFunction function = time -> getIntensity(time) - x;
         UnivariateSolver solver = new BrentSolver();
+        System.out.println();
         // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
 //        return solver.solve(100, function, 0, 100);
         return solver.solve(100, function, 0, 100);
+
+
+    }
+
+    @Override
+    public boolean isAnalytical() {
+        return false; //use numerical method here
     }
 
 

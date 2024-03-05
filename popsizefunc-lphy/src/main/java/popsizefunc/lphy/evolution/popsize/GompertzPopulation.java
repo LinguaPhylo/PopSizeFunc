@@ -18,14 +18,17 @@ import java.util.Locale;
 
 public class GompertzPopulation implements PopulationFunction{
 
-    public static final String N0ParamName = "N0";
+
     public static final String BParamName = "b";
     public static final String NINFINITYParamName = "NInfinity";
+    public static final String T50ParamName = "t50";
 
     private double N0;  // Initial population size
     private double b;   // Initial growth rate of tumor growth
     private double NInfinity; // Carrying capacity
     private double t50; // time when population is half of carrying capacity
+
+    private double resolution_magic_number = 1e3;
 
     /**
      *
@@ -58,19 +61,39 @@ public class GompertzPopulation implements PopulationFunction{
 
     @Override
     public double getIntensity(double t) {
-        UnivariateFunction function = time -> 1 / getTheta(time);
+
+        if (t == 0) return 0;
+
+        if (getTheta(t) < NInfinity/resolution_magic_number) {
+            throw new RuntimeException("Theta too small to calculate intensity!");
+        }
+
+        UnivariateFunction function = time -> 1.0 / getTheta(time);
         UnivariateIntegrator integrator = new TrapezoidIntegrator();
         // The number 10000 here represents a very high number of iterations for accuracy.
-        return integrator.integrate(10000, function, 0, t);
+        return integrator.integrate(100000, function, 0, t);
     }
 
     @Override
     public double getInverseIntensity(double x) {
+
+        UnivariateFunction thetaFunction = time -> getTheta(time) - NInfinity/resolution_magic_number;
+        UnivariateSolver thetaSolver = new BrentSolver();
+        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
+//        return solver.solve(100, function, 0, 100);
+        double maxTime = thetaSolver.solve(100, thetaFunction, 1e-6, t50*10);
+
+
         UnivariateFunction function = time -> getIntensity(time) - x;
         UnivariateSolver solver = new BrentSolver();
         // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
 //        return solver.solve(100, function, 0, 100);
-        return solver.solve(100, function, 0.001, 100);
+        return solver.solve(100, function, 0.001, maxTime);
+    }
+
+    @Override
+    public boolean isAnalytical() {
+        return false; //use numerical method here
     }
 
     /**

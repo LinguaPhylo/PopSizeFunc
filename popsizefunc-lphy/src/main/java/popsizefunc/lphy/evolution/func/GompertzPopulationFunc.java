@@ -13,10 +13,10 @@ import static popsizefunc.lphy.evolution.popsize.GompertzPopulation.*;
 
 
 public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunction> {
-    public GompertzPopulationFunc(@ParameterInfo(name = N0ParamName, description = "Initial population size.") Value<Double> N0,
-                                      @ParameterInfo(name = BParamName, description = "Initial growth rate of tumor growth.") Value<Double> b,
-                                      @ParameterInfo(name = NINFINITYParamName, description = "Limiting population size (carrying capacity).") Value<Double> NInfinity) {
-        setParam(N0ParamName, N0);
+    public GompertzPopulationFunc(@ParameterInfo(name = T50ParamName, description = "Time when population is half of carrying capacity.") Value<Double> t50,
+                                  @ParameterInfo(name = BParamName, description = "Initial growth rate of tumor growth.") Value<Double> b,
+                                  @ParameterInfo(name = NINFINITYParamName, description = "Limiting population size (carrying capacity).") Value<Double> NInfinity) {
+        setParam(T50ParamName, t50);
         setParam(BParamName, b);
         setParam(NINFINITYParamName, NInfinity);
     }
@@ -28,11 +28,11 @@ public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunc
     @Override
     public Value<PopulationFunction> apply() {
 
-        double N0 = ((Number) getParams().get(N0ParamName).value()).doubleValue();
+        double t50 = ((Number) getParams().get(T50ParamName).value()).doubleValue();
         double b = ((Number) getParams().get(BParamName).value()).doubleValue();
         double NInfinity = ((Number) getParams().get(NINFINITYParamName).value()).doubleValue();
 
-        PopulationFunction gompertzPopulation = new GompertzPopulation(N0, b, NInfinity);
+        PopulationFunction gompertzPopulation = new GompertzPopulation(t50, b, NInfinity);
 
         return new Value<>( gompertzPopulation, this);
     }

@@ -21,6 +21,9 @@ import java.util.TreeMap;
 
 public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
     private Value<PopulationFunction> popFunc;
+
+    private final String popFuncParamName = "popFunc";
+
     /**
      * Constructs a coalescent model with specified population function, number of taxa, taxa object, and leaf node ages.
      * This constructor initializes the coalescent model with necessary parameters and checks for parameter consistency.
@@ -34,8 +37,8 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
     @Citation(value = "Norton, L. (1988). A Gompertzian Model of Human Breast Cancer Growth. Cancer Research",
             title = "A Gompertzian Model of Human Breast Cancer Growth",
             authors = {"Norton, L"}, year = 1988)
-
-    public PopulationFunctionCoalescent(@ParameterInfo(name = CoalescentConstants.thetaParamName, narrativeName = "population size function.", description = "the population size.") Value<PopulationFunction> popFunc,
+//"popFunc" instead of  "CoalescentConstants.thetaParamName"
+    public PopulationFunctionCoalescent(@ParameterInfo(name = popFuncParamName, narrativeName = "population size function.", description = "the population size.") Value<PopulationFunction> popFunc,
                                         @ParameterInfo(name = DistributionConstants.nParamName, description = "number of taxa.", optional = true) Value<Integer> n,
                                         @ParameterInfo(name = TaxaConditionedTreeGenerator.taxaParamName, description = "Taxa object, (e.g. Taxa or Object[])", optional = true) Value<Taxa> taxa,
                                         @ParameterInfo(name = TaxaConditionedTreeGenerator.agesParamName, description = "an array of leaf node ages.", optional = true) Value<Double[]> ages) {
@@ -68,16 +71,14 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
 
 
     /**
-     * Samples a coalescent tree based on Kingman's coalescent process with the possibility of serially sampled data.
+     * Samples a coalescent tree based on Kingman's coalescent process and a population function with the possibility of serially sampled data.
      * It uses the population function to simulate the intervals between coalescent events and constructs the tree.
      *
      * @return A RandomVariable object encapsulating the simulated TimeTree.
      */
-    @GeneratorInfo(name = "Coalescent", narrativeName = "Kingman's coalescent tree prior",
+    @GeneratorInfo(name = "CoalescentPopFunc", narrativeName = "Kingman's coalescent tree prior with a population function",
             category = GeneratorCategory.COAL_TREE, examples = {"https://linguaphylo.github.io/tutorials/time-stamped-data/"},
             description = "The Kingman coalescent with serially sampled data. (Rodrigo and Felsenstein, 1999)")
-
-
     public RandomVariable<TimeTree> sample() {
         TimeTree tree = new TimeTree();
 
@@ -88,10 +89,11 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
         while (activeNodes.size() > 1) {
             int lineageCount = activeNodes.size();
 
-            // Assume popFunc is a Value<PopulationFunction> type, get the PopulationFunction instance
             PopulationFunction pf = popFunc.value();
+
             double interval = 0;
-                interval = Utils.getNumericalInterval(pf, lineageCount, time);
+            // Use the Utils.getSimulatedInterval method to calculate the time interval for the next coalescent event
+            interval = Utils.getSimulatedInterval(pf, lineageCount, time);
 
             // Update the current time, plus the newly calculated time interval
             time += interval;
@@ -117,7 +119,8 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
 
     }
 
-
+// constant coalescent code below:
+//
 //    public RandomVariable<TimeTree> sample() {
 //        TimeTree tree = new TimeTree();
 //
@@ -162,13 +165,13 @@ public class PopulationFunctionCoalescent extends TaxaConditionedTreeGenerator {
         if (n != null) map.put(DistributionConstants.nParamName, n);
         if (taxaValue != null) map.put(taxaParamName, taxaValue);
         if (ages != null) map.put(agesParamName, ages);
-        if (popFunc != null) map.put(agesParamName, popFunc);
+        if (popFunc != null) map.put(popFuncParamName, popFunc);
         return map;
     }
 
     @Override
     public void setParam(String paramName, Value value) {
-        if (CoalescentConstants.thetaParamName.equals(paramName)) {
+        if (popFuncParamName.equals(paramName)) {
             popFunc = value;
             return;
         }

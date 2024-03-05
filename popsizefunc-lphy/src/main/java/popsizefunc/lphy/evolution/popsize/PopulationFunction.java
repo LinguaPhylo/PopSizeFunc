@@ -34,5 +34,7 @@ public interface PopulationFunction {
         return 0;
     }
 
+    boolean isAnalytical();
+
 
 }

@@ -2,12 +2,24 @@ data {
   L = 200;
 }
 model {
-  N0 ~ LogNormal(meanlog=2.0, sdlog=1.0);
+  t50 ~ Normal(mean=2.0, sd=1.0);
   b ~ Normal(mean=0.1, sd=0.05);
-  NInfinity ~ LogNormal(meanlog=5.0, sdlog=1.5);
-  k = log(NInfinity / N0);
+  NInfinity ~ Normal(mean=1000, sd=50);
 
+  gompertzPopFunc ~ gompertz(t50=t50, b=b, NInfinity=NInfinity);
+  times ~ CoalescentPopFunc(popFunc=gompertzPopFunc, n=16);
 
-  ψ ~ CoalescentGompertz(N0=N0, b=b, NInfinity=NInfinity, n=10);
-  D ~ PhyloCTMC(tree=ψ, L=L, Q=jukesCantor());
+  D ~ PhyloCTMC(tree=times, L=L, Q=jukesCantor());
 }
+
+data {
+  L = 200;
+}
+model {
+  Growthrate ~ Normal(mean=0.1, sd=0.05);
+  N0 ~ LogNormal(meanlog=6.9, sdlog=0.5);
+  exponentialPopFunc ~ exponential(Growthrate=Growthrate, N0=N0);
+  times ~ CoalescentPopFunc(popFunc=exponentialPopFunc, n=16);
+  D ~ PhyloCTMC(tree=times, L=L, Q=jukesCantor());
+}
+

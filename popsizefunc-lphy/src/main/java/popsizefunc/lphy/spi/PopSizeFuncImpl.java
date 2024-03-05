@@ -3,7 +3,7 @@ package popsizefunc.lphy.spi;
 import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
-import popsizefunc.lphy.evolution.coalescent.ConstantPopSizeFunc;
+import popsizefunc.lphy.evolution.func.ConstantPopSizeFunc;
 import popsizefunc.lphy.evolution.func.GompertzPopulationFunc;
 import popsizefunc.lphy.evolution.coalescent.PopulationFunctionCoalescent;
 

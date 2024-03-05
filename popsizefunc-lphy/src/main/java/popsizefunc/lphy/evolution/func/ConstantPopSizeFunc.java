@@ -1,4 +1,4 @@
-package popsizefunc.lphy.evolution.coalescent;
+package popsizefunc.lphy.evolution.func;
 
 import lphy.base.evolution.coalescent.CoalescentConstants;
 import lphy.core.model.DeterministicFunction;

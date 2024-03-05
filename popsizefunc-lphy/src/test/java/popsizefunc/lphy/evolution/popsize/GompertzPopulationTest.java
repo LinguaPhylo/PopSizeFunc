@@ -14,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class GompertzPopulationTest {
 
+    private static final double DELTA = 1e-6;
+
     @Test
     void getTheta() {
         double N0 = 1.0;
@@ -43,85 +45,32 @@ class GompertzPopulationTest {
     }
 
     @Test
-    void testSettingAndGettingParams() {
-        Value<Double> N0 = new Value<>("N0", 100.0);
-        Value<Double> b = new Value<>("b", 0.01);
-        Value<Double> NInfinity = new Value<>("NInfinity", 500.0);
-        // Provide a non-null n value
-        Value<Integer> n = new Value<>("n", 2); // Assume there are 2 leaf nodes
-
-        //Create a GompertzPopulationCoalescent instance using initialized parameters
-        GompertzPopulationCoalescent coalescent = new GompertzPopulationCoalescent(
-                null,
-                N0, b, NInfinity, n, null, null);
-
-
-        assertNotNull(coalescent, "GompertzPopulationCoalescent instance should not be null.");
-    }
-
-
-    @Test
-    public void testTrapezoidalRule() {
-
-        PopulationFunction constantPopulation = new ConstantPopulation(1.0);
-
-        // Use the trapezoidal method for numerical integration
-        double result = Utils.trapezoidalRule(constantPopulation, 0, 10, 1000);
-
-
-        assertEquals(50.0, result, 0.01);
-    }
-
-
-    private static final double DELTA = 1e-6;
-
-    @Test
-    public void testNaturalLogFunction() {
-        UnivariateFunction lnFunction = Math::log;
-        assertEquals(1, lnFunction.value(Math.E), DELTA);
-    }
-    @Test
-    public void testDerivativeOfNaturalLogFunction() {
-        UnivariateFunction derivativeFunction = x -> 1 / x;
-        assertEquals(1 / Math.E, derivativeFunction.value(Math.E), DELTA);
-    }
-
-    @Test
-    public void testIntegralOfNaturalLogFunction() {
-        UnivariateFunction exponentialFunction = Math::exp;
-        UnivariateIntegrator integrator = new RombergIntegrator();
-
-        double integralResult = integrator.integrate(10000, exponentialFunction, 0, 1);
-        assertEquals(Math.E - 1, integralResult, 0.01);
-    }
-
-    @Test
-    public void testInverseFunction() {
-        UnivariateFunction function = x -> Math.exp(x) - 5;
-        UnivariateSolver solver = new BrentSolver();
-
-        double lowerBound = 1;
-        double upperBound = 3;
-        double expectedSolution = Math.log(5);
-
-        // Solve for f(x) = 0, the expected solution is ln(5)
-        double solution = solver.solve(100, function, lowerBound, upperBound);
-        assertEquals(expectedSolution, solution, 0.01);
-    }
-
-
-    @Test
     public void testIntensityAndInverseIntensity() {
 
-        double N0 = 100;
+        double t50 = 100;
         double b = 0.1;
         double NInfinity = 1000;
-        GompertzPopulation population = new GompertzPopulation(N0, b, NInfinity);
+        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
 
-        double t = 5; // given time point
+        double t = 130; // given time point
+
+        System.out.println("Intensity at 0: " + population.getIntensity(0.0));
+
+        UnivariateFunction function = time -> population.getTheta(time) - NInfinity/1e3;
+        UnivariateSolver solver = new BrentSolver();
+        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
+//        return solver.solve(100, function, 0, 100);
+        double maxTime = solver.solve(100, function, 1e-6, t50*10);
+
+        System.out.println("Time of theta = NInfinity/1e3 is " + maxTime);
+
+        System.out.println("Theta at time " + t + " is " + population.getTheta(t));
+        System.out.println("Theta at time " + t50 + " is " + population.getTheta(t50));
 
         // Calculate the cumulative intensity at a given time point
         double intensityAtTimeT = population.getIntensity(t);
+
+        System.out.println("Passed intensity test! Intensity at time " + t + " is " + intensityAtTimeT);
 
         // Use the accumulated intensity value to calculate its corresponding time
         double inverseIntensityResult = population.getInverseIntensity(intensityAtTimeT);
