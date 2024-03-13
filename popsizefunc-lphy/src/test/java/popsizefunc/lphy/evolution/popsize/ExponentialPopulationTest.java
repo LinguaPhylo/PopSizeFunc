@@ -21,7 +21,7 @@ public class ExponentialPopulationTest {
         ExponentialPopulation exponentialPopulation = new ExponentialPopulation(growthRate, N0);
 
         // Test getTheta method for a given time t
-        double t = 5; // Time at which to calculate theta
+        double t = 80000; // Time at which to calculate theta
         // Calculate expected theta using the exponential growth formula: N0 * exp(growthRate * t)
         double expectedTheta = N0 * Math.exp(growthRate * -t);
         double actualTheta = exponentialPopulation.getTheta(t);

@@ -5,7 +5,7 @@ import popsizefunc.lphy.evolution.popsize.PopulationFunction;
 public class Utils {
 
     /**
-     * 计算给定时间点和人口函数下的合并时间间隔。
+     * Calculates the time interval for a given point in time and population function.
      *
      * @param U Uniform random variable used for randomization.
      * @param populationFunction Population function used to calculate intensity and inverse intensity.
@@ -21,7 +21,7 @@ public class Utils {
     }
 
     /**
-     * Gets the simulated merge interval.
+     * Gets the simulated interval.
      */
     public static double getSimulatedInterval(PopulationFunction populationFunction,
                                               int lineageCount, double timeOfLastCoalescent) {
@@ -30,7 +30,7 @@ public class Utils {
     }
 
     /**
-     * 获取中位数合并时间间隔，假设U=0.5。
+     * Gets the median merge interval, assuming U=0.5.
      */
     public static double getMedianInterval(PopulationFunction populationFunction,
                                            int lineageCount, double timeOfLastCoalescent) {

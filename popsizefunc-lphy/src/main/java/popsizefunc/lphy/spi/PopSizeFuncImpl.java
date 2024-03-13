@@ -3,9 +3,10 @@ package popsizefunc.lphy.spi;
 import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
-import popsizefunc.lphy.evolution.func.ConstantPopSizeFunc;
-import popsizefunc.lphy.evolution.func.GompertzPopulationFunc;
 import popsizefunc.lphy.evolution.coalescent.PopulationFunctionCoalescent;
+import popsizefunc.lphy.evolution.func.ConstantPopSizeFunc;
+import popsizefunc.lphy.evolution.func.ExponentialPopSizeFunc;
+import popsizefunc.lphy.evolution.func.GompertzPopulationFunc;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,7 @@ public class PopSizeFuncImpl extends LPhyBaseImpl {
 
     @Override
     public List<Class<? extends BasicFunction>> declareFunctions() {
-        return Arrays.asList( ConstantPopSizeFunc.class, GompertzPopulationFunc.class );
+        return Arrays.asList( ConstantPopSizeFunc.class, GompertzPopulationFunc.class, ExponentialPopSizeFunc.class, ExponentialPopSizeFunc.class);
     }
 
     public String getExtensionName() {

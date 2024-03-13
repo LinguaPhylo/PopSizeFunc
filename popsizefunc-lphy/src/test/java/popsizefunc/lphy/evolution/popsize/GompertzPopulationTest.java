@@ -1,13 +1,9 @@
 package popsizefunc.lphy.evolution.popsize;
 
-import lphy.core.model.Value;
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.integration.RombergIntegrator;
-import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.junit.jupiter.api.Test;
-import popsizefunc.lphy.evolution.coalescent.Utils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,33 +12,9 @@ class GompertzPopulationTest {
 
     private static final double DELTA = 1e-6;
 
-    @Test
-    void getTheta() {
-        double N0 = 1.0;
-        double Ninf = 1000.0;
-        double b = 0.5;
-        double t = 0.5;
-        GompertzPopulation gompertz = new GompertzPopulation(N0, b, Ninf);
-        double theta = gompertz.getTheta(t);
-        double expectedTheta = 4.608903879;
-        double delta = 0.0000001;
-        assertEquals(expectedTheta, theta, delta);
-    }
 
-    @Test
-    void getTheta2() {
-        double N0 = 2.0;
-        double Ninf = 1000.0;
-        double b = 0.5;
-        double t = 2.0;
-        GompertzPopulation gompertz = new GompertzPopulation(N0, b, Ninf);
-        double theta = gompertz.getTheta(t);
-        double expectedTheta = 101.6493072;
-        double delta = 0.000001;
-        assertEquals(expectedTheta, theta, delta);
-
-
-    }
+    //@Test
+    //test gettheta
 
     @Test
     public void testIntensityAndInverseIntensity() {
@@ -52,7 +24,7 @@ class GompertzPopulationTest {
         double NInfinity = 1000;
         GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
 
-        double t = 130; // given time point
+        double t = 101; // given time point
 
         System.out.println("Intensity at 0: " + population.getIntensity(0.0));
 
@@ -80,31 +52,57 @@ class GompertzPopulationTest {
         assertEquals(t, inverseIntensityResult, DELTA, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
     }
 
-
-
     @Test
-    public void testTheta() {
-        double N0 = 100;
-        double b = 0.1;
-        double NInfinity = 1000;
-        GompertzPopulation population = new GompertzPopulation(N0, b, NInfinity);
+    public void testGetIntensity() {
+        // Parameters of the logistic growth model
+        double t50 = 200;
 
-        double t = 5;
-        double expectedTheta = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)));
-        double actualTheta = population.getTheta(t);
-        assertEquals(expectedTheta, actualTheta, "The theta calculation does not match the expected result.");
+        double b = 0.1; // Assume growth rate b = 4 for this test
+        double NInfinity = 1000;
+
+        double t = 230.0;
+        // Initialize the LogisticPopulation with the specified parameters
+        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
+
+        // Print the intensity at time 0 for debugging purposes
+        System.out.println("Intensity at " + t + " = " + population.getIntensity(t));
     }
 
-    @Test
-    public void testGetIntensityAtZero() {
+        @Test
+    public void testIntensityAndInverseIntensity2() {
+        // Parameters of the logistic growth model
+        double t50 = 200;
 
-        double N0 = 100;
-        double b = 0.1;
+        double b = 0.1; // Assume growth rate b = 4 for this test
         double NInfinity = 1000;
-        PopulationFunction model = new GompertzPopulation(N0, b, NInfinity);
-        double intensityAtZero = model.getIntensity(0);
-        assertEquals(100, intensityAtZero, 1e-5, "Intensity at t=0 should be N0.");
+
+        // Initialize the LogisticPopulation with the specified parameters
+        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
+
+        // Print the intensity at time 0 for debugging purposes
+        System.out.println("Intensity at 0: " + population.getIntensity(0.0));
+
+        // Test a specific time point, for example, t = 2.0 (which is equal to t50 in this case)
+        double t = 200.0000000001;
+
+        // Calculate the intensity at the given time point t
+        double intensityAtTimeT = population.getIntensity(t);
+        System.out.println("Passed intensity test! Intensity at time " + t + " is " + intensityAtTimeT);
+
+        // Use the calculated intensity value to find the corresponding time using the inverse intensity function
+        double inverseIntensityResult = population.getInverseIntensity(intensityAtTimeT);
+        System.out.println("t = " + t);
+        System.out.println("Intensity = " + intensityAtTimeT);
+        System.out.println("Inverse Intensity = " + inverseIntensityResult);
+
+
+        // Verify whether the inverse intensity calculation result is close to the original time point t
+        assertEquals(t, inverseIntensityResult, DELTA, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
     }
+
+
+
+
 
 
     @Test

@@ -1,8 +1,7 @@
 package popsizefunc.lphy.evolution.popsize;
 
 import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.integration.TrapezoidIntegrator;
-import org.apache.commons.math3.analysis.integration.UnivariateIntegrator;
+import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 import org.apache.commons.math3.analysis.solvers.BrentSolver;
 import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 
@@ -15,6 +14,24 @@ public class ExponentialPopulation implements PopulationFunction {
 
     private double GrowthRate;
     private double N0;
+
+    /**
+     * Initializes an IterativeLegendreGaussIntegrator with predefined settings for numerical integration.
+     * This setup is optimized for accuracy and efficiency in logistic population model computations.
+     *
+     * @return Configured IterativeLegendreGaussIntegrator with:
+     * - 5 Legendre-Gauss points for quadrature precision.
+     * - Relative accuracy of 1.0e-12 and absolute accuracy of 1.0e-8.
+     * - A minimum of 2 iterations and a maximum of 10,000 iterations.
+     */
+    private IterativeLegendreGaussIntegrator createIntegrator() {
+        int numberOfPoints = 5; // Legendre-Gauss points
+        double relativeAccuracy = 1.0e-12; // relative precision
+        double absoluteAccuracy = 1.0e-8; // absolute accuracy
+        int minimalIterationCount = 2; // Minimum number of iterations
+        int maximalIterationCount = 10000; //Maximum number of iterations, adjust as needed
+        return new IterativeLegendreGaussIntegrator(numberOfPoints, relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
+    }
 
 
     public ExponentialPopulation(double GrowthRate, double N0) {
@@ -42,10 +59,13 @@ public class ExponentialPopulation implements PopulationFunction {
 
     @Override
     public double getIntensity(double t) {
+
+        if (t == 0) return 0;
+
+
         UnivariateFunction function = time -> 1 / getTheta(time);
-        UnivariateIntegrator integrator = new TrapezoidIntegrator();
-        // The number 10000 here represents a very high number of iterations for accuracy.
-        return integrator.integrate(10000, function, 0, t);
+        IterativeLegendreGaussIntegrator integrator = createIntegrator();
+        return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
     }
 
 
