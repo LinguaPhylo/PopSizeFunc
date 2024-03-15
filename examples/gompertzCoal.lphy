@@ -3,7 +3,7 @@ data {
   L = 200;
 }
 model {
-  t50 ~ Normal(mean=2.0, sd=1.0);
+  t50 ~ Normal(mean=200.0, sd=1.0);
   b ~ Normal(mean=0.1, sd=0.05);
   NInfinity ~ Normal(mean=1000.0, sd=50.0);
 

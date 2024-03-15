@@ -1,0 +1,15 @@
+
+data {
+  L = 200;
+}
+model {
+  t50 ~ Normal(mean=200.0, sd=1.0);
+  b ~ Normal(mean=0.1, sd=0.05);
+  n ~ Normal(mean=1000.0, sd=50.0);
+
+  logisticPopFunc = logistic(t50=t50, nCarryingCapacity=n, b=b);
+
+  tree ~ CoalescentPopFunc(popFunc=logisticPopFunc, n=16);
+
+  D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor());
+}

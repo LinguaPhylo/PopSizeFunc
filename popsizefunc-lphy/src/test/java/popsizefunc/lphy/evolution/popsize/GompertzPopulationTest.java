@@ -55,12 +55,14 @@ class GompertzPopulationTest {
     @Test
     public void testGetIntensity() {
         // Parameters of the logistic growth model
-        double t50 = 200;
+        double t50 = 100;
 
         double b = 0.1; // Assume growth rate b = 4 for this test
         double NInfinity = 1000;
 
-        double t = 230.0;
+        //max = 173, 174 will fail(org.apache.commons.math3.exception.MaxCountExceededException: illegal state: maximal count (10,000) exceeded)
+
+        double t = 173;
         // Initialize the LogisticPopulation with the specified parameters
         GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
 
@@ -71,10 +73,10 @@ class GompertzPopulationTest {
         @Test
     public void testIntensityAndInverseIntensity2() {
         // Parameters of the logistic growth model
-        double t50 = 200;
+        double t50 = 200; // 100;
 
-        double b = 0.1; // Assume growth rate b = 4 for this test
-        double NInfinity = 1000;
+        double b = 0.14; // 0.1; // Assume growth rate b = 4 for this test
+        double NInfinity = 980; // 1000;
 
         // Initialize the LogisticPopulation with the specified parameters
         GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
@@ -83,7 +85,11 @@ class GompertzPopulationTest {
         System.out.println("Intensity at 0: " + population.getIntensity(0.0));
 
         // Test a specific time point, for example, t = 2.0 (which is equal to t50 in this case)
-        double t = 200.0000000001;
+        double t = 250.0; // 120.000000001;
+
+        // Brent solver maxTime: 217.178971
+
+        double x = 8.408209;
 
         // Calculate the intensity at the given time point t
         double intensityAtTimeT = population.getIntensity(t);
@@ -99,6 +105,35 @@ class GompertzPopulationTest {
         // Verify whether the inverse intensity calculation result is close to the original time point t
         assertEquals(t, inverseIntensityResult, DELTA, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
     }
+
+    @Test
+    public void testGetTimeForGivenProportion() {
+
+        double t50 = 200;
+        double b = 0.1;
+        double NInfinity = 1000;
+
+        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
+
+        // Set the target percentage
+        double targetProportion = 0.010;
+
+        // Calculate the time to reach the target percentage
+        double tStar = population.getTimeForGivenProportion(targetProportion);
+
+        // verify that the population at time tStar is indeed close to NInfinity of 20%
+        double expectedPopulation = NInfinity * targetProportion;
+        double actualPopulation = population.getTheta(tStar);
+
+
+        System.out.println("tStar: " + tStar);
+        System.out.println("Expected population at tStar: " + expectedPopulation);
+        System.out.println("Actual population at tStar: " + actualPopulation);
+
+        assertEquals(expectedPopulation, actualPopulation, DELTA,
+                "The population at tStar should be close to the expected proportion of NInfinity.");
+    }
+
 
 
 

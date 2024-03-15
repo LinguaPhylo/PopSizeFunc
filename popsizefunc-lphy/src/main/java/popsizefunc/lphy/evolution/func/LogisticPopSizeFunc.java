@@ -10,17 +10,17 @@ import popsizefunc.lphy.evolution.popsize.LogisticPopulation;
 import popsizefunc.lphy.evolution.popsize.PopulationFunction;
 
 public class LogisticPopSizeFunc extends DeterministicFunction<PopulationFunction> {
-    // 参数名称定义
-    public static final String X0_PARAM_NAME = "x0";
-    public static final String L_PARAM_NAME = "L";
-    public static final String K_PARAM_NAME = "k";
 
-    public LogisticPopSizeFunc(@ParameterInfo(name = X0_PARAM_NAME, description = "The midpoint of the logistic function.") Value<Double> x0,
-                                  @ParameterInfo(name = L_PARAM_NAME, description = "The carrying capacity or the maximum population size.") Value<Double> L,
-                                  @ParameterInfo(name = K_PARAM_NAME, description = "The logistic growth rate.") Value<Double> k) {
-        setParam(X0_PARAM_NAME, x0);
-        setParam(L_PARAM_NAME, L);
-        setParam(K_PARAM_NAME, k);
+    public static final String T50_PARAM_NAME = "t50";
+    public static final String N_CARRYING_CAPACITY_PARAM_NAME = "nCarryingCapacity";
+    public static final String B_PARAM_NAME = "b";
+
+    public LogisticPopSizeFunc(@ParameterInfo(name = T50_PARAM_NAME, description = "The midpoint of the logistic function.") Value<Double> t50,
+                                  @ParameterInfo(name = N_CARRYING_CAPACITY_PARAM_NAME, description = "The carrying capacity or the maximum population size.") Value<Number> nCarryingCapacity,
+                                  @ParameterInfo(name = B_PARAM_NAME, description = "The logistic growth rate.") Value<Double> b) {
+        setParam(T50_PARAM_NAME, t50);
+        setParam(N_CARRYING_CAPACITY_PARAM_NAME, nCarryingCapacity);
+        setParam(B_PARAM_NAME, b);
     }
 
     @GeneratorInfo(name="logistic", narrativeName = "Logistic growth function",
@@ -29,11 +29,11 @@ public class LogisticPopSizeFunc extends DeterministicFunction<PopulationFunctio
 
     @Override
     public Value<PopulationFunction> apply() {
-        double x0 = ((Number) getParams().get(X0_PARAM_NAME).value()).doubleValue();
-        double L = ((Number) getParams().get(L_PARAM_NAME).value()).doubleValue();
-        double k = ((Number) getParams().get(K_PARAM_NAME).value()).doubleValue();
+        double t50 = ((Number) getParams().get(T50_PARAM_NAME).value()).doubleValue();
+        double nCarryingCapacity = ((Number) getParams().get(N_CARRYING_CAPACITY_PARAM_NAME).value()).doubleValue();
+        double b = ((Number) getParams().get(B_PARAM_NAME).value()).doubleValue();
 
-        PopulationFunction logisticPopulation = new LogisticPopulation(x0, L, k);
+        PopulationFunction logisticPopulation = new LogisticPopulation(t50, nCarryingCapacity, b);
 
         return new Value<>(logisticPopulation, this);
     }

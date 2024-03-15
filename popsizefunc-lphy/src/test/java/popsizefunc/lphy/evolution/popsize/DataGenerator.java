@@ -12,23 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataGenerator {
-    private static double nCarryingCapacity = 1000; // 假设的承载能力
-    private static double b = 0.1; // 假设的增长率
-    private static double t50 = 50; // 假设的中点
-    private static double resolution_magic_number = 100; // 分辨率魔法数字
+    private static double nCarryingCapacity = 1000;
+    private static double b = 0.1;
+    private static double t50 = 50;
+    private static double resolution_magic_number = 100;
 
     public static void main(String[] args) {
         String filePath = "intensity_data.csv";
         List<String> lines = new ArrayList<>();
-        lines.add("Time,Intensity"); // CSV头部
+        lines.add("Time,Intensity");
 
-        for (double t = 0; t <= 100; t += 1) { // 以1为步长遍历时间
+        for (double t = 0; t <= 100; t += 1) {
             double intensity = getIntensity(t);
             lines.add(t + "," + intensity);
         }
 
         try {
-            // 将数据写入文件
+
             Files.write(Paths.get(filePath), lines, StandardOpenOption.CREATE);
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class DataGenerator {
 
         if (getTheta(t) < nCarryingCapacity / resolution_magic_number) {
             System.out.println("Theta too small to calculate intensity for t= " + t);
-            return Double.NaN; // 使用NaN来标识无法计算的强度值
+            return Double.NaN;
         }
 
         UnivariateFunction function = time -> 1 / getTheta(time);

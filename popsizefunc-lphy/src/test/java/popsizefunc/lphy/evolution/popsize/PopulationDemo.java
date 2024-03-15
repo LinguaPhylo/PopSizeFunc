@@ -3,19 +3,32 @@ package popsizefunc.lphy.evolution.popsize;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class LogisticPopulationDemo {
-    public static void main(String[] args) {
+public class PopulationDemo {
+    public static void main(String[] args) throws IOException {
 //        LogisticPopulation population = new LogisticPopulation(100, 1000, 0.1);
 //        double tStart = 0;
 //        double tEnd = 500;
 //        double deltaT = 1;
 
-        GompertzPopulation population = new GompertzPopulation(100, 0.1, 1000);
+        double t50 = 10.0;
+        double b = 0.1;
+        double n = 2000.0;
+
+        GompertzPopulation gPopulation = new GompertzPopulation(t50, b, n);
+        writeData(gPopulation, "gompertz");
+
+        LogisticPopulation lPopulation = new LogisticPopulation(t50,  n, b);
+        writeData(lPopulation, "logistic");
+
+    }
+
+    private static void writeData(PopulationFunction population, String filename) throws IOException {
         double tStart = 0;
-        double tEnd = 500;
+        double tEnd = 70;
         double deltaT = 1;
 
-        try (FileWriter writer = new FileWriter("population_data.csv for Gomp")) {
+        FileWriter writer = new FileWriter(filename + "_theta_intensity_data.csv");
+        try {
             writer.write("Time,Theta,Intensity\n");
 
             for (double t = tStart; t <= tEnd; t += deltaT) {
@@ -25,7 +38,10 @@ public class LogisticPopulationDemo {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            writer.close();
         }
+
     }
 }
 
