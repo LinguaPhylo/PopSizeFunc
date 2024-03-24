@@ -18,7 +18,7 @@ public class ExponentialPopSizeFunc extends DeterministicFunction<PopulationFunc
         setParam(N0_PARAM_NAME, N0);
     }
 
-    @GeneratorInfo(name="exponential", narrativeName = "Exponential growth function",
+    @GeneratorInfo(name="exponential1", narrativeName = "Exponential growth function",
             category = GeneratorCategory.COAL_TREE, examples = {" .lphy" },
             description = "Models population growth using an exponential growth function.")
 

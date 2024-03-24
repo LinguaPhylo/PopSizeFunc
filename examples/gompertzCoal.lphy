@@ -3,15 +3,21 @@ data {
   L = 200;
 }
 model {
-  t50 ~ Normal(mean=40.0, sd=1.0);
-  b ~ Normal(mean=0.00055, sd=0.00000005);
-  NInfinity ~ Normal(mean=100000000000000.0, sd=50.0);
+  //t50 ~ Normal(mean=40.0, sd=1.0);
+  f0 = 0.5;
+  //alpha=0.8;
+  //beta=0.99;
+  //f0 ~ Beta(alpha=20, beta=2);
+  b ~ Normal(mean=0.055, sd=0.0005);
+  //b ~ LogNormal(meanlog=-0.415, sdlog=0.71);
+  NInfinity ~ Normal(mean=1000, sd=50.0);
 
-  gompertzPopFunc = gompertz(t50=t50, b=b, NInfinity=NInfinity);
+
+  gompertzPopFunc = gompertz(f0=f0, b=b, NInfinity=NInfinity);
   //g = gompertz(t50=50.0, b=0.5, NInfinity=1000.0);
 
-  times ~ CoalescentPopFunc(popFunc=gompertzPopFunc, n=16);
+  tree ~ CoalescentPopFunc(popFunc=gompertzPopFunc, n=16);
 
-  D ~ PhyloCTMC(tree=times, L=L, Q=jukesCantor());
+  D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor());
 }
 

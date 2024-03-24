@@ -18,13 +18,31 @@ public class GompertzPopulation implements PopulationFunction {
     public static final String BParamName = "b";
     public static final String NINFINITYParamName = "NInfinity";
     public static final String T50ParamName = "t50";
+    public static final String F0ParamName = "f0";
 
     private double N0;  // Initial population size
     private double b;   // Initial growth rate of tumor growth
     private double NInfinity; // Carrying capacity
     private double t50; // time when population is half of carrying capacity
+    private double f0;        // Initial proportion of the carrying capacity
 
     private double resolution_magic_number = 1e4;
+
+    public static double computeT50(double NInfinity, double N0, double b) {
+
+        if (N0 >= NInfinity || b <= 0) {
+            throw new IllegalArgumentException("N0 must be less than NInfinity and b must be greater than 0.");
+        }
+        double ratio = NInfinity / N0;
+        double proportion = 0.5;
+//        if (proportion <= 0 || proportion >= 1) {
+//            throw new IllegalArgumentException("Proportion must be between 0 and 1.");
+//        }
+        double t50 = Math.log(1 - Math.log(proportion) / Math.log(ratio)) / b;
+        return t50;
+    }
+
+
 
 
     public double getTimeForGivenProportion(double k) {
@@ -45,6 +63,10 @@ public class GompertzPopulation implements PopulationFunction {
         return tStar;
     }
 
+    public double getN0() {
+        return this.N0;
+    }
+
 
 
     private IterativeLegendreGaussIntegrator createIntegrator() {
@@ -57,19 +79,28 @@ public class GompertzPopulation implements PopulationFunction {
     }
 
     /**
-     * @param t50
+     * @param
      * @param b
      * @param NInfinity
      */
-    public GompertzPopulation(double t50, double b, double NInfinity) {
+//    public GompertzPopulation(double t50, double b, double NInfinity) {   //(this is for t50 )
+//        this.b = b;
+//        this.t50 = t50;
+//        this.NInfinity = NInfinity;
+//        // Calculate N0 based on t50, b, and NInfinity
+//        // N(t50) = NInfinity / 2
+//        // t50 is a time location given by the user, t50 < 0 means it is in the early exponential phase
+//        this.N0 = NInfinity * Math.pow(2, -Math.exp(-b * this.t50));
+//    }
+
+    public GompertzPopulation(double f0, double b, double NInfinity) {
+        this.f0 = f0;
         this.b = b;
-        this.t50 = t50;
         this.NInfinity = NInfinity;
-        // Calculate N0 based on t50, b, and NInfinity
-        // N(t50) = NInfinity / 2
-        // t50 is a time location given by the user, t50 < 0 means it is in the early exponential phase
-        this.N0 = NInfinity * Math.pow(2, -Math.exp(-b * this.t50));
+        this.N0  = NInfinity * this .f0;
     }
+
+
 
     /**
      * Implement the Gompertz function to calculate theta at time t
@@ -78,9 +109,16 @@ public class GompertzPopulation implements PopulationFunction {
      * @param t time, where t > 0 is time in the past
      * @return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)))
      */
+//    @Override  (this is for t50 )
+//    public double getTheta(double t) {
+//        // the sign of b * t is such that t = 0 is present time and t > 0 is time in the past
+//        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
+//    }
+
     @Override
     public double getTheta(double t) {
-        // the sign of b * t is such that t = 0 is present time and t > 0 is time in the past
+        // Calculate N0 from f0 and NInfinity
+       // double N0 = NInfinity * f0;
         return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
     }
 
@@ -178,23 +216,30 @@ public class GompertzPopulation implements PopulationFunction {
         double targetIntensity = 1000;
 
         double proportionForT1 = 0.01;
-
+        double proportionForT50 = 0.5;
 
         double t1 = getTimeForGivenProportion(proportionForT1);
+        double t50 = getTimeForGivenProportion(proportionForT50);
+        System.out.println("f0 = " + f0);
+        System.out.println("t1 = " + t1);
 
         double growthPhaseTime = t1 - t50;
-        double specialTime = t1 ; //previous t1+t50
 
-        double deltaTime = growthPhaseTime / specialTime;
+        double deltaTime = growthPhaseTime / 100;
 
-        double time = t1;
+        double time = Math.max(t1,0);
         double intensity = getIntensity(time);
+        System.out.println("t1 = " + t1);
 
         while (intensity < targetIntensity) {
             time += deltaTime;
             intensity = getIntensity(time);
+
         }
-        return time;
+
+
+       // return time;
+        return Math.max(time, 0);
     }
 
 
@@ -209,7 +254,8 @@ public class GompertzPopulation implements PopulationFunction {
 
 
     public static void main(String[] args) {
-        double t50 = 10;
+        //double t50 = 10;
+        double f0 =0.5;
         double b = 0.1;
         double NInfinity = 1000;
         double tStart = 0;
@@ -217,7 +263,7 @@ public class GompertzPopulation implements PopulationFunction {
         int nPoints = 100;
 
 
-        GompertzPopulation gompertzPopulation = new GompertzPopulation(t50, b, NInfinity);
+        GompertzPopulation gompertzPopulation = new GompertzPopulation(f0, b, NInfinity);
 
         try (PrintWriter writer = new PrintWriter(new FileWriter("gompertzpopt50_data.csv"))) {
             writer.println("time,theta");

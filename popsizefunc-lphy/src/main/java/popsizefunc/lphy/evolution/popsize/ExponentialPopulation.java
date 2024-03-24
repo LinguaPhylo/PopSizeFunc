@@ -1,9 +1,6 @@
 package popsizefunc.lphy.evolution.popsize;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
-import org.apache.commons.math3.analysis.solvers.BrentSolver;
-import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -60,26 +57,77 @@ public class ExponentialPopulation implements PopulationFunction {
     @Override
     public double getIntensity(double t) {
 
-        if (t == 0) return 0;
-
-
-        UnivariateFunction function = time -> 1 / getTheta(time);
-        IterativeLegendreGaussIntegrator integrator = createIntegrator();
-        return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+        double r = GrowthRate;
+        if (r == 0.0) {
+            return t / N0;
+        } else {
+            return (Math.exp(t * r) - 1.0) / N0 / r;
+        }
     }
+//
+//        if (t == 0) return 0;
+//
+//
+//        UnivariateFunction function = time -> 1 / getTheta(time);
+//        IterativeLegendreGaussIntegrator integrator = createIntegrator();
+//        return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+//    }
 
+
+//    @Override
+//    public double getInverseIntensity(double x) {
+////        If min is set to 0 in BrentSolver, an error will be reported:
+////        org.apache.commons.math3.exception.NumberIsTooLargeException: endpoints do not specify an interval: [0, 0]
+////        so I change min equals to 0.1
+//        UnivariateFunction function = time -> getIntensity(time) - x;
+//        UnivariateSolver solver = new BrentSolver();
+//        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
+////        return solver.solve(100, function, 0, 100);
+//        return solver.solve(100, function, 0.1, 50);
+//    }
 
     @Override
     public double getInverseIntensity(double x) {
-//        If min is set to 0 in BrentSolver, an error will be reported:
-//        org.apache.commons.math3.exception.NumberIsTooLargeException: endpoints do not specify an interval: [0, 0]
-//        so I change min equals to 0.1
-        UnivariateFunction function = time -> getIntensity(time) - x;
-        UnivariateSolver solver = new BrentSolver();
-        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
-//        return solver.solve(100, function, 0, 100);
-        return solver.solve(100, function, 0.1, 50);
+        double r = GrowthRate;
+        if (r == 0.0) {
+            return N0 * x;
+        } else {
+            return Math.log(1.0 + N0 * x * r) / r;
+        }
     }
+//        UnivariateFunction function = time -> getIntensity(time) - x;
+//        UnivariateSolver solver = new BrentSolver();
+//        double tMin = 0;
+//        double tMax = 10;
+//
+//        double lastIntensity = getIntensity(tMin);
+//        System.out.println("Starting search: tMin=" + tMin + ", Intensity=" + lastIntensity);
+//
+//
+//
+//        while (lastIntensity < x) {
+//            tMax *= 2;
+//            lastIntensity = getIntensity(tMax);
+//            System.out.println("Expanding search: tMax=" + tMax + ", Intensity=" + lastIntensity);
+//
+//            if (tMax >= Double.MAX_VALUE / 2) {
+//                System.out.println("Reached maximum double value for tMax.");
+//                tMax = Double.MAX_VALUE / 2;
+//                break;
+//            }
+//        }
+//
+//        try {
+//            double result = solver.solve(100, function, tMin, tMax);
+//            System.out.println("Found time for given intensity: " + result);
+//            System.out.println("Found time for given intensity: " + result + ", x=" + x);
+//            return result;
+//        } catch (Exception e) {
+//            System.out.println("Failed at tMax=" + tMax + " with lastIntensity=" + lastIntensity);
+//            throw new RuntimeException("Failed to find a valid time for given intensity: " + x, e);
+//        }
+//    }
+
 
     @Override
     public boolean isAnalytical() {
@@ -89,9 +137,9 @@ public class ExponentialPopulation implements PopulationFunction {
 
     public static void main(String[] args) {
         double GrowthRate = 0.1;
-        double N0 = 100;
+        double N0 = 3;
         double tStart = 0;
-        double tEnd = 20;
+        double tEnd = 100;
         int nPoints = 100;
 
         ExponentialPopulation exponentialPopulation = new ExponentialPopulation(GrowthRate, N0);

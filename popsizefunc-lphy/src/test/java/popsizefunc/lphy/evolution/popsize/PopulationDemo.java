@@ -11,20 +11,32 @@ public class PopulationDemo {
 //        double deltaT = 1;
 
         double t50 = 40;
-        double b = 0.0055;
-        double n = 1000;
+        double f0 = 0.05;
+        double b = -0.4;
+        double n = 10000;
+        //double n0 = n * 0.9; // pick randomly between 0.75 and 0.99?
 
-        GompertzPopulation gPopulation = new GompertzPopulation(t50, b, n);
+        //double t50 = GompertzPopulation.computeT50(n, n0, b);
+
+        //GompertzPopulation gPopulation = new GompertzPopulation(t50, b, n);
+        GompertzPopulation gPopulation = new GompertzPopulation(f0, b, n);
+        double t1 = gPopulation.getTimeForGivenProportion(0.01);
+        //double n0 = gPopulation.getNO();
+
+        System.out.println("t1 = " + t1);
+        //System.out.println("n0 = " + n0);
+        System.out.println("t at n50 = " + gPopulation.getTimeForGivenProportion(0.5));
+
         writeData(gPopulation, "gompertz");
 
-        LogisticPopulation lPopulation = new LogisticPopulation(t50,  n, b);
-        writeData(lPopulation, "logistic");
+//        LogisticPopulation lPopulation = new LogisticPopulation(t50,  n, b);
+//        writeData(lPopulation, "logistic");
 
     }
 
     private static void writeData(PopulationFunction population, String filename) throws IOException {
         double tStart = 0;
-        double tEnd = 1000;
+        double tEnd = 7;
         double deltaT = 1;
 
         FileWriter writer = new FileWriter(filename + "_theta_intensity_data.csv");
