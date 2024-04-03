@@ -10,10 +10,10 @@ public class PopulationDemo {
 //        double tEnd = 500;
 //        double deltaT = 1;
 
-        double t50 = 40;
-        double f0 = 0.05;
-        double b = -0.4;
-        double n = 10000;
+        double t50 = 2;
+        double f0 = 0.5;
+        double b = 0.1;
+        double n = 1000;
         //double n0 = n * 0.9; // pick randomly between 0.75 and 0.99?
 
         //double t50 = GompertzPopulation.computeT50(n, n0, b);
@@ -36,7 +36,7 @@ public class PopulationDemo {
 
     private static void writeData(PopulationFunction population, String filename) throws IOException {
         double tStart = 0;
-        double tEnd = 7;
+        double tEnd = 12;
         double deltaT = 1;
 
         FileWriter writer = new FileWriter(filename + "_theta_intensity_data.csv");

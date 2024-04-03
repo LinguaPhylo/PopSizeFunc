@@ -17,7 +17,7 @@ public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunc
                                   @ParameterInfo(name = F0ParamName, description = "Time when population is half of carrying capacity.") Value<Double> f0,
                                   @ParameterInfo(name = BParamName, description = "Initial growth rate of tumor growth.") Value<Double> b,
                                   @ParameterInfo(name = NINFINITYParamName, description = "Limiting population size (carrying capacity).") Value<Double> NInfinity) {
-       // setParam(T50ParamName, t50);
+       //setParam(T50ParamName, t50);
         setParam(F0ParamName, f0);
         setParam(BParamName, b);
         setParam(NINFINITYParamName, NInfinity);
@@ -34,6 +34,8 @@ public class GompertzPopulationFunc extends DeterministicFunction<PopulationFunc
         double f0 = ((Number) getParams().get(F0ParamName).value()).doubleValue();
         double b = ((Number) getParams().get(BParamName).value()).doubleValue();
         double NInfinity = ((Number) getParams().get(NINFINITYParamName).value()).doubleValue();
+
+        //PopulationFunction gompertzPopulation = new GompertzPopulation(t50, b, NInfinity);
 
         PopulationFunction gompertzPopulation = new GompertzPopulation(f0, b, NInfinity);
 
