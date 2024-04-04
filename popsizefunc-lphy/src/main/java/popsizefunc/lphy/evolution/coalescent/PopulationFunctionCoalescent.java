@@ -2,7 +2,6 @@ package popsizefunc.lphy.evolution.coalescent;
 
 import lphy.base.distribution.DistributionConstants;
 import lphy.base.evolution.Taxa;
-import lphy.base.evolution.coalescent.CoalescentConstants;
 import lphy.base.evolution.tree.TaxaConditionedTreeGenerator;
 import lphy.base.evolution.tree.TimeTree;
 import lphy.base.evolution.tree.TimeTreeNode;
