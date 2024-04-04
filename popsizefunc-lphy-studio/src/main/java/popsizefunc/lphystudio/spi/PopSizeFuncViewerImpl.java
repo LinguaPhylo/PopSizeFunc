@@ -1,7 +1,5 @@
 package popsizefunc.lphystudio.spi;
 
-
-import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.Value;
 import lphystudio.app.graphicalmodelpanel.viewer.Viewer;
 import lphystudio.spi.StudioViewerImpl;
