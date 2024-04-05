@@ -1,4 +1,4 @@
-package popsizefunc.lphystudio.app;
+package popsizefunc.lphystudio.viewer;
 
 import javax.swing.*;
 
