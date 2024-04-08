@@ -5,6 +5,7 @@ rootProject.name = "PopSizeFunc"
 
 include("popsizefunc-lphy")
 include("popsizefunc-lphy-studio")
+include("popsizefunc-lphybeast")
 
 pluginManagement {
     // the repos to load Gradle plugins
