@@ -1,11 +1,8 @@
 package popsizefunc.lphy.evolution.popsize;
 
-import org.apache.commons.math3.analysis.UnivariateFunction;
-import org.apache.commons.math3.analysis.solvers.BrentSolver;
-import org.apache.commons.math3.analysis.solvers.UnivariateSolver;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class GompertzPopulationTest {
@@ -15,157 +12,83 @@ class GompertzPopulationTest {
 
     //@Test
     //test gettheta
+    @Test
+    public void testGetPopSize() {
+
+        // Set the parameters for the Gompertz growth model
+        double f0 = 0.5;  // Example initial proportion
+        double b = 0.1;   // Example growth rate
+        double NInfinity = 1000;  // Example carrying capacity
+
+        GompertzPopulation gompertzPopulation = new GompertzPopulation(f0, b, NInfinity);
+
+        double expectedTheta = gompertzPopulation.getN0() * Math.exp(Math.log(NInfinity / gompertzPopulation.getN0()) * (1 - Math.exp(b * 10)));
+        double result = gompertzPopulation.getTheta(10);
+        assertEquals( expectedTheta, result, DELTA);
+    }
+
+
+    @Test
+    public void testGetIntensity() {
+
+
+        // Set the parameters for the Gompertz growth model
+        double f0 = 0.1058;  // Example initial proportion
+        double b = 2.4982;   // Example growth rate
+        double NInfinity = 6016.7644;  // Example carrying capacity
+        GompertzPopulation gompertzPopulation = new GompertzPopulation(f0, b, NInfinity);
+        double t = 0.625;
+
+        double expectedIntensity = 0.309539; // Calculate based on the Gompertz model's specifics
+
+        assertEquals(expectedIntensity, gompertzPopulation.getIntensity(t), 1e-4, "Intensity calculation should be correct.");
+    }
+
+
+
 
     @Test
     public void testIntensityAndInverseIntensity() {
 
-        double t50 = 100;
-        double b = 0.1;
-        double NInfinity = 1000;
-        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
+        double f0 = 0.1058;  // Example initial proportion
+        double b = 2.4982;   // Example growth rate
+        double NInfinity = 6016.7644;  // Example carrying capacity
+        GompertzPopulation gompertzPopulation = new GompertzPopulation(f0, b, NInfinity);
 
-        double t = 101; // given time point
+        double t = 0.625;
 
-        System.out.println("Intensity at 0: " + population.getIntensity(0.0));
+        // Calculate intensity at given time t
+        double intensity = gompertzPopulation.getIntensity(t);
 
-        UnivariateFunction function = time -> population.getTheta(time) - NInfinity/1e3;
-        UnivariateSolver solver = new BrentSolver();
-        // The range [0, 100] might need to be adjusted depending on the growth model and expected time range.
-//        return solver.solve(100, function, 0, 100);
-        double maxTime = solver.solve(100, function, 1e-6, t50*10);
+        // Now calculate time for the given intensity, should approximately match t
+        double estimatedTime = gompertzPopulation.getInverseIntensity(0.309539);
 
-        System.out.println("Time of theta = NInfinity/1e3 is " + maxTime);
+        // Assert that the time calculated by getInverseIntensity is close to the original time t
+        assertEquals( t, estimatedTime, DELTA);
 
-        System.out.println("Theta at time " + t + " is " + population.getTheta(t));
-        System.out.println("Theta at time " + t50 + " is " + population.getTheta(t50));
-
-        // Calculate the cumulative intensity at a given time point
-        double intensityAtTimeT = population.getIntensity(t);
-
-        System.out.println("Passed intensity test! Intensity at time " + t + " is " + intensityAtTimeT);
-
-        // Use the accumulated intensity value to calculate its corresponding time
-        double inverseIntensityResult = population.getInverseIntensity(intensityAtTimeT);
-
-        // Verify whether the inverse intensity calculation result is close to the original time point
-        //Allow a certain error range
-        assertEquals(t, inverseIntensityResult, DELTA, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
+        // Optionally, verify the intensity value itself if you have an expected value
+        // Example expected value calculation (this would be your expected model output, based on your formula)
+        // double expectedIntensity = ...; // Depends on your intensity calculation model
+        // assertEquals("Intensity at time should match expected", expectedIntensity, intensity, DELTA);
     }
-
-    @Test
-    public void testGetIntensity() {
-        // Parameters of the logistic growth model
-        double t50 = 100;
-
-        double b = 0.1; // Assume growth rate b = 4 for this test
-        double NInfinity = 1000;
-
-        //max = 173, 174 will fail(org.apache.commons.math3.exception.MaxCountExceededException: illegal state: maximal count (10,000) exceeded)
-
-        double t = 173;
-        // Initialize the LogisticPopulation with the specified parameters
-        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
-
-        // Print the intensity at time 0 for debugging purposes
-        System.out.println("Intensity at " + t + " = " + population.getIntensity(t));
-    }
-
-        @Test
-    public void testIntensityAndInverseIntensity2() {
-        // Parameters of the logistic growth model
-        double t50 = 200; // 100;
-
-        double b = 0.14; // 0.1; // Assume growth rate b = 4 for this test
-        double NInfinity = 980; // 1000;
-
-        // Initialize the LogisticPopulation with the specified parameters
-        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
-
-        // Print the intensity at time 0 for debugging purposes
-        System.out.println("Intensity at 0: " + population.getIntensity(0.0));
-
-        // Test a specific time point, for example, t = 2.0 (which is equal to t50 in this case)
-        double t = 250.0; // 120.000000001;
-
-        // Brent solver maxTime: 217.178971
-
-        double x = 8.408209;
-
-        // Calculate the intensity at the given time point t
-        double intensityAtTimeT = population.getIntensity(t);
-        System.out.println("Passed intensity test! Intensity at time " + t + " is " + intensityAtTimeT);
-
-        // Use the calculated intensity value to find the corresponding time using the inverse intensity function
-        double inverseIntensityResult = population.getInverseIntensity(intensityAtTimeT);
-        System.out.println("t = " + t);
-        System.out.println("Intensity = " + intensityAtTimeT);
-        System.out.println("Inverse Intensity = " + inverseIntensityResult);
-
-
-        // Verify whether the inverse intensity calculation result is close to the original time point t
-        assertEquals(t, inverseIntensityResult, DELTA, "Inverse intensity calculation should return the original time point within an acceptable error margin.");
-    }
-
-    @Test
-    public void testGetTimeForGivenProportion() {
-
-        double t50 = 200;
-        double b = 0.1;
-        double NInfinity = 1000;
-
-        GompertzPopulation population = new GompertzPopulation(t50, b, NInfinity);
-
-        // Set the target percentage
-        double targetProportion = 0.010;
-
-        // Calculate the time to reach the target percentage
-        double tStar = population.getTimeForGivenProportion(targetProportion);
-
-        // verify that the population at time tStar is indeed close to NInfinity of 20%
-        double expectedPopulation = NInfinity * targetProportion;
-        double actualPopulation = population.getTheta(tStar);
-
-
-        System.out.println("tStar: " + tStar);
-        System.out.println("Expected population at tStar: " + expectedPopulation);
-        System.out.println("Actual population at tStar: " + actualPopulation);
-
-        assertEquals(expectedPopulation, actualPopulation, DELTA,
-                "The population at tStar should be close to the expected proportion of NInfinity.");
-    }
-
-
-
 
 
 
 
     @Test
-    void testGetThetaAtT50() {
-        double t50 = 10;
-        double b = 0.1;
-        double NInfinity = 1000;
+    public void testInverseIntensity() {
+        double f0 = 0.1058;
+        double b = 2.4982;
+        double NInfinity = 6016.7644;
+        GompertzPopulation gompertz = new GompertzPopulation(f0, b, NInfinity);
 
-        GompertzPopulation gompertz = new GompertzPopulation(t50, b, NInfinity);
+        double targetIntensity = 0.309539; // The intensity for which we want to find the time
+        double expectedTime = 0.625; // The time at which the intensity should be targetIntensity
 
-        // Calculate theta value at t50
-        double thetaAtT50 = gompertz.getTheta(t50);
+        double calculatedTime = gompertz.getInverseIntensity(targetIntensity);
+        double calculatedIntensityAtCalculatedTime = gompertz.getIntensity(calculatedTime);
 
-        // Verify whether the theta value is close to NInfinity / 2 at time t50
-        assertEquals(NInfinity / 2, thetaAtT50, NInfinity * 0.05, "Theta at t50 should be approximately half of NInfinity");
-    }
-
-    @Test
-    void testGetThetaAtDifferentTimes() {
-        double t50 = 10;
-        double b = 0.1;
-        double NInfinity = 1000;
-        GompertzPopulation gompertz = new GompertzPopulation(t50, b, NInfinity);
-        assertAll(
-                () -> assertTrue(gompertz.getTheta(1) > NInfinity / 2, "Theta at time 0 should be less than NInfinity / 2"),
-                () -> assertTrue(gompertz.getTheta(t50) > 0, "Theta at t50 should be greater than 0 and close to NInfinity / 2"),
-                () -> assertTrue(gompertz.getTheta(t50) == gompertz.getTheta(t50), "Theta should increase over time")
-        );
+        assertEquals( targetIntensity, calculatedIntensityAtCalculatedTime, 1e-4);
     }
 
 
